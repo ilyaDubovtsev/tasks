@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -17,12 +12,12 @@ namespace JsonConversion
 		[Test]
 		public void WarehouseConvertor_ShouldConvert()
 		{
-			var v2 = File.ReadAllText("D:\\Контур.Кампус\\tasks\\JsonConversion\\1.v2.json");
-			var v3 = File.ReadAllText("D:\\Контур.Кампус\\tasks\\JsonConversion\\1.v3.json");
+			var v2 = File.ReadAllText("..\\..\\1.v2.json");
+			var expected = File.ReadAllText("..\\..\\1.v3.json").Replace(" ", "").Replace("\n", "").Replace("\t", "");
 
-			var result = new WarehoseConvertor().Convert(v2);
+			var actual = new WarehoseConvertor().ConvertV2ToV3(v2);
 
-			result.Should().Be(v3);
+			actual.Should().Be(expected);
 		}
 	}
 }

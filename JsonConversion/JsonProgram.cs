@@ -11,18 +11,17 @@ namespace JsonConversion
 		static void Main()
 		{
 			string json = Console.In.ReadToEnd();
-			var v3 = new WarehoseConvertor().Convert(json);
+			var v3 = new WarehoseConvertor().ConvertV2ToV3(json);
 			Console.Write(v3);
 		}
 	}
 
 	public class WarehoseConvertor
 	{
-		public string Convert(string oldVersion)
+		public string ConvertV2ToV3(string oldVersion)
 		{
-			JObject v2 = JObject.Parse(oldVersion);
 			var productWarehouseV2 = JsonConvert.DeserializeObject<ProductWarehouseV2>(oldVersion);
-			return JsonConvert.SerializeObject(new ProductWarehouse
+			return JsonConvert.SerializeObject(new ProductWarehouseV3
 			{
 				version = "3",
 				products = productWarehouseV2
@@ -34,7 +33,7 @@ namespace JsonConversion
 		}
 	}
 
-	public class ProductWarehouse
+	public class ProductWarehouseV3
 	{
 		public string version { get; set; }
 		public ProductV3[] products { get; set; }
@@ -46,18 +45,11 @@ namespace JsonConversion
 		public Dictionary<int, ProductV2> products { get; set; }
 	}
 
-	public class ProductPair
-	{
-		public int Id { get; set; }
-		public ProductV2 Product { get; set; }
-	}
-
-
 	public class  ProductV2
 	{
-		public string Name { get; set; }
-		public double Price { get; set; }
-		public long Count { get; set; }
+		public string name { get; set; }
+		public double price { get; set; }
+		public long count { get; set; }
 	}
 
 	public class ProductV3
@@ -70,9 +62,18 @@ namespace JsonConversion
 		public ProductV3(ProductV2 old, int id)
 		{
 			this.id = id;
-			name = old.Name;
-			price = old.Price;
-			count = old.Count;
+			name = old.name;
+			price = old.price;
+			count = old.count;
+		}
+
+		private string DoublePrettify(double d)
+		{
+			if (Math.Abs(d - (int) d) < 0.000001)
+				return $"{(int)d}";
+			return d.ToString(System.Globalization.CultureInfo.InvariantCulture);
 		}
 	}
+
+
 }
