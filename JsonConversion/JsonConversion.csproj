@@ -62,6 +62,10 @@
   <ItemGroup>
     <Compile Include="JsonConversionTest.cs" />
     <Compile Include="JsonProgram.cs" />
+    <Compile Include="ProductV2.cs" />
+    <Compile Include="ProductV3.cs" />
+    <Compile Include="ProductWarehouseV2.cs" />
+    <Compile Include="ProductWarehouseV3.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
