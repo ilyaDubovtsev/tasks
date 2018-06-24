@@ -102,6 +102,9 @@ namespace PostfixNotation
         {
             if (input.Equals(string.Empty) || string.IsNullOrWhiteSpace(input))
                 return 0;
+            decimal res;
+            if (decimal.TryParse(input, out res))
+                return res;
             Stack<string> stack = new Stack<string>();
             Queue<string> queue = new Queue<string>(ConvertToPostfixNotation(input.Replace(" ", "")
                 .Replace("\t", "")
