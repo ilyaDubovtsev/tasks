@@ -100,7 +100,7 @@ namespace PostfixNotation
         }
         public decimal result(string input)
         {
-            if (input.Equals(string.Empty))
+            if (input.Equals(string.Empty) || string.IsNullOrWhiteSpace(input))
                 return 0;
             Stack<string> stack = new Stack<string>();
             Queue<string> queue = new Queue<string>(ConvertToPostfixNotation(input.Replace(" ", "")
