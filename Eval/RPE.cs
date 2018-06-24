@@ -95,27 +95,30 @@ namespace PostfixNotation
         private void SeparateBraces(List<string> outputSeparated, Stack<string> stack, string c)
         {
             if (stack.Count > 0 && !c.Equals("("))
-            {
-                if (c.Equals(")"))
-                {
-                    string s = stack.Pop();
-                    while (s != "(")
-                    {
-                        outputSeparated.Add(s);
-                        s = stack.Pop();
-                    }
-                }
-                else if (GetPriority(c) > GetPriority(stack.Peek()))
-                    stack.Push(c);
-                else
-                {
-                    while (stack.Count > 0 && GetPriority(c) <= GetPriority(stack.Peek()))
-                        outputSeparated.Add(stack.Pop());
-                    stack.Push(c);
-                }
-            }
+                DoWithCLosedBraces(outputSeparated, stack, c);
             else
                 stack.Push(c);
+        }
+
+        private void DoWithCLosedBraces(List<string> outputSeparated, Stack<string> stack, string c)
+        {
+            if (c.Equals(")"))
+            {
+                string s = stack.Pop();
+                while (s != "(")
+                {
+                    outputSeparated.Add(s);
+                    s = stack.Pop();
+                }
+            }
+            else if (GetPriority(c) > GetPriority(stack.Peek()))
+                stack.Push(c);
+            else
+            {
+                while (stack.Count > 0 && GetPriority(c) <= GetPriority(stack.Peek()))
+                    outputSeparated.Add(stack.Pop());
+                stack.Push(c);
+            }
         }
 
         public decimal result(string input)
@@ -128,6 +131,12 @@ namespace PostfixNotation
             Stack<string> stack = new Stack<string>();
             Queue<string> queue = Normalize(input);
             string str = queue.Dequeue();
+            DoMaths(stack, queue, str);
+            return Convert.ToDecimal(stack.Pop());
+        }
+
+        private string DoMaths(Stack<string> stack, Queue<string> queue, string str)
+        {
             while (queue.Count >= 0)
             {
                 if (!operators.Contains(str))
@@ -154,7 +163,8 @@ namespace PostfixNotation
                 }
 
             }
-            return Convert.ToDecimal(stack.Pop());
+
+            return str;
         }
 
         private void InitializeOperations()
