@@ -100,6 +100,8 @@ namespace PostfixNotation
         }
         public decimal result(string input)
         {
+            if (input.Equals(string.Empty))
+                return 0;
             Stack<string> stack = new Stack<string>();
             Queue<string> queue = new Queue<string>(ConvertToPostfixNotation(input.Replace(" ", "")
                 .Replace("\t", "")
