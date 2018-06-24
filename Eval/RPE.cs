@@ -109,7 +109,7 @@ namespace PostfixNotation
                 .Replace("\n", "")
                 .Replace(".", ",")));
             string str = queue.Dequeue();
-            while (queue.Count >= 0)
+            while (queue.Count > 0)
             {
                 if (!operators.Contains(str))
                 {
