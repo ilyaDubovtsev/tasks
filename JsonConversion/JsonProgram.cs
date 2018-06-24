@@ -24,7 +24,7 @@ namespace JsonConversion
 			var productWarehouseV2 = JsonConvert.DeserializeObject<ProductWarehouseV2>(oldVersion);
 			return JsonConvert.SerializeObject(new ProductWarehouse
 			{
-				version = 3,
+				version = "3",
 				products = productWarehouseV2
 					.products
 					.Select(x => new ProductV3(x.Value, x.Key))
@@ -36,7 +36,7 @@ namespace JsonConversion
 
 	public class ProductWarehouse
 	{
-		public int version { get; set; }
+		public string version { get; set; }
 		public ProductV3[] products { get; set; }
 	}
 
