@@ -4,6 +4,9 @@
 // kiss_a@bk.ru
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+
 namespace PostfixNotation
 {
     public class PostfixNotationExpression
@@ -112,7 +115,7 @@ namespace PostfixNotation
                 .Replace("\n", "")
                 .Replace(".", ",")));
             string str = queue.Dequeue();
-            while (queue.Count > 0)
+            while (queue.Count >= 0)
             {
                 if (!operators.Contains(str))
                 {
