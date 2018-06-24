@@ -56,16 +56,16 @@ namespace JsonConversion
 	public class  ProductV2
 	{
 		public string Name { get; set; }
-		public decimal Price { get; set; }
-		public int Count { get; set; }
+		public double Price { get; set; }
+		public long Count { get; set; }
 	}
 
 	public class ProductV3
 	{
 		public int id { get; set; }
 		public string name { get; set; }
-		public decimal price { get; set; }
-		public int count { get; set; }
+		public double price { get; set; }
+		public long count { get; set; }
 
 		public ProductV3(ProductV2 old, int id)
 		{
