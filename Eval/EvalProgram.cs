@@ -12,7 +12,6 @@ namespace EvalTask
 			string input = Console.In.ReadToEnd();
 		    string output = new PostfixNotationExpression().result(input).ToString();
 			Console.WriteLine(output);
-
 		}
 
 	    public class RPEParser
