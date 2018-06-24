@@ -18,10 +18,11 @@ namespace EvalTask
         [TestCase("100500/100500", 1)]
         [TestCase("(14+2)*2", 32)]
         [TestCase("((14+2)*2+4)*2", 72)]
-        [TestCase("1/2*2", 1)]
+        [TestCase("2*2+1+2/2", 6)]
         [TestCase("3,14*2", 3.14 * 2)]
         [TestCase("((((((1+1)*2)*2)*2)*2)*2)*2", 128)]
         [TestCase("4", 4)]
+        [TestCase("1/2", 0.5)]
         public void RPEParser_MustCalculateSimpleExpression(string expression, decimal expected)
         {
             var postfixNotation = new PostfixNotationExpression();
