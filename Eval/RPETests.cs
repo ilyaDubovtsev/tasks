@@ -14,17 +14,39 @@ namespace EvalTask
     {
         [Test]
         [TestCase("1+2*10", 21)]
+        [TestCase("2*10", 20)]
         [TestCase("100500/100500", 1)]
         [TestCase("(14+2)*2", 32)]
         [TestCase("((14+2)*2+4)*2", 72)]
         [TestCase("1/2*2", 1)]
         [TestCase("3,14*2", 3.14 * 2)]
         [TestCase("((((((1+1)*2)*2)*2)*2)*2)*2", 128)]
+        [TestCase("4", 4)]
         public void RPEParser_MustCalculateSimpleExpression(string expression, decimal expected)
         {
             var postfixNotation = new PostfixNotationExpression();
 
-            postfixNotation.result(expression).Should().Be(expected);
+            postfixNotation.result(expression)
+                .Should()
+                .Be(expected);
+        }
+
+        [Test]
+        [TestCase("4/0", 0)]
+        [TestCase(" ", 0)]
+        [TestCase("", 0)]
+        [TestCase("+++", 0)]
+        [TestCase("+*/", 0)]
+        [TestCase("+12/", 0)]
+        [TestCase("@#!", 0)]
+        [TestCase("abc", 0)]
+        public void RPEParser_MustNotCalculateSimpleExpression(string expression, decimal expected)
+        {
+            var postfixNotation = new PostfixNotationExpression();
+
+            postfixNotation.result(expression)
+                .Should()
+                .NotBeOfType(typeof(decimal));
         }
     }
 }
