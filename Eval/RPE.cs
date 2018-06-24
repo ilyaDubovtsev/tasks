@@ -170,13 +170,13 @@ namespace PostfixNotation
             operations["/"] =
                 (a, b) => b / a;
         }
-        
+
 
         private decimal CalculateSum(Stack<string> stack, string str, decimal summ)
         {
             decimal a = Convert.ToDecimal(stack.Pop());
             decimal b = Convert.ToDecimal(stack.Pop());
-            return operations[str](a,b);
+            return operations[str](a, b);
         }
 
         private Queue<string> Normalize(string input)
