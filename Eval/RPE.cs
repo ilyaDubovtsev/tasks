@@ -14,33 +14,44 @@ namespace PostfixNotation
         public PostfixNotationExpression()
         {
             operators = new List<string>(standart_operators);
-
+            InitializeOperations();
         }
         private List<string> operators;
         private List<string> standart_operators =
             new List<string>(new string[] { "(", ")", "+", "-", "*", "/", "^" });
+
+        private Dictionary<string, Func<decimal, decimal, decimal>> operations =
+            new Dictionary<string, Func<decimal, decimal, decimal>>();
 
         private IEnumerable<string> Separate(string input)
         {
             int pos = 0;
             while (pos < input.Length)
             {
-                string s = string.Empty + input[pos];
-                if (!standart_operators.Contains(input[pos].ToString()))
-                {
-                    if (Char.IsDigit(input[pos]))
-                        for (int i = pos + 1; i < input.Length &&
-                            (Char.IsDigit(input[i]) || input[i] == ',' || input[i] == '.'); i++)
-                            s += input[i];
-                    else if (Char.IsLetter(input[pos]))
-                        for (int i = pos + 1; i < input.Length &&
-                            (Char.IsLetter(input[i]) || Char.IsDigit(input[i])); i++)
-                            s += input[i];
-                }
+                string s = GetString(input, pos);
                 yield return s;
                 pos += s.Length;
             }
         }
+
+        private string GetString(string input, int pos)
+        {
+            string s = string.Empty + input[pos];
+            if (!standart_operators.Contains(input[pos].ToString()))
+            {
+                if (Char.IsDigit(input[pos]))
+                    for (int i = pos + 1; i < input.Length &&
+                        (Char.IsDigit(input[i]) || input[i] == ',' || input[i] == '.'); i++)
+                        s += input[i];
+                else if (Char.IsLetter(input[pos]))
+                    for (int i = pos + 1; i < input.Length &&
+                        (Char.IsLetter(input[i]) || Char.IsDigit(input[i])); i++)
+                        s += input[i];
+            }
+
+            return s;
+        }
+
         private byte GetPriority(string s)
         {
             switch (s)
@@ -69,28 +80,7 @@ namespace PostfixNotation
             {
                 if (operators.Contains(c))
                 {
-                    if (stack.Count > 0 && !c.Equals("("))
-                    {
-                        if (c.Equals(")"))
-                        {
-                            string s = stack.Pop();
-                            while (s != "(")
-                            {
-                                outputSeparated.Add(s);
-                                s = stack.Pop();
-                            }
-                        }
-                        else if (GetPriority(c) > GetPriority(stack.Peek()))
-                            stack.Push(c);
-                        else
-                        {
-                            while (stack.Count > 0 && GetPriority(c) <= GetPriority(stack.Peek()))
-                                outputSeparated.Add(stack.Pop());
-                            stack.Push(c);
-                        }
-                    }
-                    else
-                        stack.Push(c);
+                    SeparateBraces(outputSeparated, stack, c);
                 }
                 else
                     outputSeparated.Add(c);
@@ -101,19 +91,42 @@ namespace PostfixNotation
 
             return outputSeparated.ToArray();
         }
+
+        private void SeparateBraces(List<string> outputSeparated, Stack<string> stack, string c)
+        {
+            if (stack.Count > 0 && !c.Equals("("))
+            {
+                if (c.Equals(")"))
+                {
+                    string s = stack.Pop();
+                    while (s != "(")
+                    {
+                        outputSeparated.Add(s);
+                        s = stack.Pop();
+                    }
+                }
+                else if (GetPriority(c) > GetPriority(stack.Peek()))
+                    stack.Push(c);
+                else
+                {
+                    while (stack.Count > 0 && GetPriority(c) <= GetPriority(stack.Peek()))
+                        outputSeparated.Add(stack.Pop());
+                    stack.Push(c);
+                }
+            }
+            else
+                stack.Push(c);
+        }
+
         public decimal result(string input)
         {
+            decimal res;
             if (input.Equals(string.Empty) || string.IsNullOrWhiteSpace(input))
                 return 0;
-            decimal res;
             if (decimal.TryParse(input, out res))
                 return res;
             Stack<string> stack = new Stack<string>();
-            Queue<string> queue = new Queue<string>(ConvertToPostfixNotation(input.Replace(" ", "")
-                .Replace("\t", "")
-                .Replace("\r", "")
-                .Replace("\n", "")
-                .Replace(".", ",")));
+            Queue<string> queue = Normalize(input);
             string str = queue.Dequeue();
             while (queue.Count >= 0)
             {
@@ -127,46 +140,7 @@ namespace PostfixNotation
                     decimal summ = 0;
                     try
                     {
-
-                        switch (str)
-                        {
-
-                            case "+":
-                                {
-                                    decimal a = Convert.ToDecimal(stack.Pop());
-                                    decimal b = Convert.ToDecimal(stack.Pop());
-                                    summ = a + b;
-                                    break;
-                                }
-                            case "-":
-                                {
-                                    decimal a = Convert.ToDecimal(stack.Pop());
-                                    decimal b = Convert.ToDecimal(stack.Pop());
-                                    summ = b - a;
-                                    break;
-                                }
-                            case "*":
-                                {
-                                    decimal a = Convert.ToDecimal(stack.Pop());
-                                    decimal b = Convert.ToDecimal(stack.Pop());
-                                    summ = b * a;
-                                    break;
-                                }
-                            case "/":
-                                {
-                                    decimal a = Convert.ToDecimal(stack.Pop());
-                                    decimal b = Convert.ToDecimal(stack.Pop());
-                                    summ = b / a;
-                                    break;
-                                }
-                            case "^":
-                                {
-                                    decimal a = Convert.ToDecimal(stack.Pop());
-                                    decimal b = Convert.ToDecimal(stack.Pop());
-                                    summ = Convert.ToDecimal(Math.Pow(Convert.ToDouble(b), Convert.ToDouble(a)));
-                                    break;
-                                }
-                        }
+                        summ = CalculateSum(stack, str, summ);
                     }
                     catch (Exception ex)
                     {
@@ -181,6 +155,35 @@ namespace PostfixNotation
 
             }
             return Convert.ToDecimal(stack.Pop());
+        }
+
+        private void InitializeOperations()
+        {
+            operations["+"] =
+                (a, b) => a + b;
+            operations["-"] =
+                (a, b) => b - a;
+            operations["*"] =
+                (a, b) => a * b;
+            operations["/"] =
+                (a, b) => b / a;
+        }
+        
+
+        private decimal CalculateSum(Stack<string> stack, string str, decimal summ)
+        {
+            decimal a = Convert.ToDecimal(stack.Pop());
+            decimal b = Convert.ToDecimal(stack.Pop());
+            return operations[str](a,b);
+        }
+
+        private Queue<string> Normalize(string input)
+        {
+            return new Queue<string>(ConvertToPostfixNotation(input.Replace(" ", "")
+                .Replace("\t", "")
+                .Replace("\r", "")
+                .Replace("\n", "")
+                .Replace(".", ",")));
         }
     }
 
