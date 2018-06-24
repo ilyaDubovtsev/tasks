@@ -158,7 +158,7 @@ namespace PostfixNotation
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(ex.Message);
+                        //MessageBox.Show(ex.Message);
                     }
                     stack.Push(summ.ToString());
                     if (queue.Count > 0)
