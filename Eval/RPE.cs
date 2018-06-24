@@ -104,7 +104,8 @@ namespace PostfixNotation
             Queue<string> queue = new Queue<string>(ConvertToPostfixNotation(input.Replace(" ", "")
                 .Replace("\t", "")
                 .Replace("\r", "")
-                .Replace("\n", "")));
+                .Replace("\n", "")
+                .Replace(".", ",")));
             string str = queue.Dequeue();
             while (queue.Count >= 0)
             {
