@@ -48,7 +48,6 @@ namespace PostfixNotation
                         (Char.IsLetter(input[i]) || Char.IsDigit(input[i])); i++)
                         s += input[i];
             }
-
             return s;
         }
 
@@ -88,19 +87,18 @@ namespace PostfixNotation
             if (stack.Count > 0)
                 foreach (string c in stack)
                     outputSeparated.Add(c);
-
             return outputSeparated.ToArray();
         }
 
         private void SeparateBraces(List<string> outputSeparated, Stack<string> stack, string c)
         {
             if (stack.Count > 0 && !c.Equals("("))
-                DoWithCLosedBraces(outputSeparated, stack, c);
+                DoWithClosedBraces(outputSeparated, stack, c);
             else
                 stack.Push(c);
         }
 
-        private void DoWithCLosedBraces(List<string> outputSeparated, Stack<string> stack, string c)
+        private void DoWithClosedBraces(List<string> outputSeparated, Stack<string> stack, string c)
         {
             if (c.Equals(")"))
             {
@@ -131,11 +129,11 @@ namespace PostfixNotation
             Stack<string> stack = new Stack<string>();
             Queue<string> queue = Normalize(input);
             string str = queue.Dequeue();
-            DoMaths(stack, queue, str);
+            DoMaths(ref stack, queue, str);
             return Convert.ToDecimal(stack.Pop());
         }
 
-        private string DoMaths(Stack<string> stack, Queue<string> queue, string str)
+        private void DoMaths(ref Stack<string> stack, Queue<string> queue, string str)
         {
             while (queue.Count >= 0)
             {
@@ -151,20 +149,14 @@ namespace PostfixNotation
                     {
                         summ = CalculateSum(stack, str, summ);
                     }
-                    catch (Exception ex)
-                    {
-                        //MessageBox.Show(ex.Message);
-                    }
+                    catch (Exception ex) { }
                     stack.Push(summ.ToString());
                     if (queue.Count > 0)
                         str = queue.Dequeue();
                     else
                         break;
                 }
-
             }
-
-            return str;
         }
 
         private void InitializeOperations()
