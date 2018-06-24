@@ -101,7 +101,7 @@ namespace PostfixNotation
         public decimal result(string input)
         {
             Stack<string> stack = new Stack<string>();
-            Queue<string> queue = new Queue<string>(ConvertToPostfixNotation(input));
+            Queue<string> queue = new Queue<string>(ConvertToPostfixNotation(input.Remove(' ')));
             string str = queue.Dequeue();
             while (queue.Count >= 0)
             {
